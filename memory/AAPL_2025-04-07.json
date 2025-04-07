@@ -1,0 +1,33 @@
+[
+  {
+    "zeit": "2025-04-07T19:48:55.260967",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:55.510067",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 15 Min (Vola: 0.90)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:55.510389",
+    "text": "\ud83d\udcca Risikobewertung: MITTEL (Score=1.00)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:55.510500",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:55.510580",
+    "typ": "signal",
+    "epic": "AAPL",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 15,
+    "risiko": "MITTEL",
+    "symbol_finnhub": "AAPL",
+    "symbol_yfinance": "AAPL",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00507,
+    "spike": false
+  }
+]
