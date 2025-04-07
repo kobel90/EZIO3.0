@@ -1,0 +1,33 @@
+[
+  {
+    "zeit": "2025-04-07T09:20:28.666288",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-07T09:20:28.907998",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 5 Min (Vola: 3.24)"
+  },
+  {
+    "zeit": "2025-04-07T09:20:28.908311",
+    "text": "\ud83d\udcca Risikobewertung: MITTEL (Score=1.00)"
+  },
+  {
+    "zeit": "2025-04-07T09:20:28.908429",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-07T09:20:28.908526",
+    "typ": "signal",
+    "epic": "META",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 5,
+    "risiko": "MITTEL",
+    "symbol_finnhub": "META",
+    "symbol_yfinance": "META",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00538,
+    "spike": false
+  }
+]

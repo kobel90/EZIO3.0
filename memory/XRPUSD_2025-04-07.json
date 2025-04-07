@@ -1,0 +1,6 @@
+[
+  {
+    "zeit": "2025-04-07T04:46:42.620473",
+    "text": "\u274c Fehler beim Signal: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
+  }
+]

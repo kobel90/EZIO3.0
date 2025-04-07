@@ -1,0 +1,14 @@
+{
+  "default": {
+    "stop_loss_percent": 0.03,
+    "take_profit_percent": 0.05
+  },
+  "XRPUSD": {
+    "stop_loss_percent": 0.02,
+    "take_profit_percent": 0.06
+  },
+  "BTCUSD": {
+    "stop_loss_percent": 0.025,
+    "take_profit_percent": 0.08
+  }
+}

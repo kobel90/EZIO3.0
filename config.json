@@ -1,0 +1,21 @@
+{
+  "api_key": "paDdIqX7rYuVi5g3",
+  "account_id": "224298367542800902",
+  "password": "Roxanne90?!",
+  "finnhub_api_key": "cvoggfhr01gqpf5ct9kcvoggfhr01gqpf5ct9kg",
+
+  "trading_params": {
+    "default": {
+      "stop_loss_percent": 0.03,
+      "take_profit_percent": 0.05
+    },
+    "XRPUSD": {
+      "stop_loss_percent": 0.02,
+      "take_profit_percent": 0.06
+    },
+    "BTCUSD": {
+      "stop_loss_percent": 0.025,
+      "take_profit_percent": 0.07
+    }
+  }
+}

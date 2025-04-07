@@ -1,0 +1,591 @@
+import pandas as pd
+import numpy as np
+import time
+from capital_api import CapitalComAPI, logger
+import signal
+import sys
+from typing import Dict, List, Tuple
+from datetime import datetime
+from guv_logger import log_guv_to_csv
+from daytrade_strategy import CapitalAllocator, DaytradeStrategy
+from longterm_tracker import LongtermTracker
+
+class TradingBot:
+    def __init__(self, api: CapitalComAPI):
+        self.api = api
+        self.allocator = CapitalAllocator(1500)  # Später durch Live-Wert ersetzen
+        self.capital = self.allocator.allocate()
+        from longterm_tracker import LongtermTracker
+        ...
+        self.longterm_tracker = LongtermTracker()
+        self.daytrade_strategy = DaytradeStrategy()
+        self.active_trades = {}  # Dict für Entry-Zeit und Preis
+        self.api = api
+        self.running = True
+        self.position_size = 2.0  # Doppelte Position Size
+        self.max_positions = 20   # Erhöht auf 20 Positionen
+        
+        # Aggressive Trading-Parameter
+        self.rsi_period = 14
+        self.rsi_oversold = 25    # Aggressiveres Einstiegslevel
+        self.rsi_overbought = 75  # Aggressiveres Ausstiegslevel
+        self.macd_fast = 12
+        self.macd_slow = 26
+        self.macd_signal = 9
+        
+        # Spezielle Parameter für XRP (noch aggressiver)
+        self.xrp_params = {
+            "position_size": 4.0,     # Vierfache Position Size für XRP
+            "rsi_oversold": 30,       # Früher einsteigen bei Long
+            "rsi_overbought": 70,     # Später aussteigen bei Long
+            "stop_loss_percent": 4.0,  # Mehr Spielraum bei Stop Loss
+            "take_profit_percent": 8.0 # Höheres Take Profit
+        }
+        
+        # Aggressive Stop Loss und Take Profit in Prozent
+        self.stop_loss_percent = 3.0
+        self.take_profit_percent = 6.0
+        
+        # Performance-Tracking
+        self.hourly_profit = 0.0
+        self.total_profit = 0.0
+        self.last_hour_check = datetime.now()
+        self.positions_opened = 0
+        self.positions_closed = 0
+        self.winning_trades = 0
+        self.losing_trades = 0
+        
+        # Margin-Management
+        self.min_margin_required = 1000  # Minimale Margin in USD
+        self.current_margin = 0.0
+        self.margin_used = 0.0
+        
+        # Vordefinierte Liste von Märkten (XRP an erster Stelle)
+        self.markets = [
+            {"epic": "XRPUSD", "instrumentName": "Ripple/USD", "leverage": 20},  # XRP zuerst
+            {"epic": "BTCUSD", "instrumentName": "Bitcoin/USD", "leverage": 20},
+            {"epic": "ETHUSD", "instrumentName": "Ethereum/USD", "leverage": 20},
+            {"epic": "US500", "instrumentName": "S&P 500", "leverage": 20},
+            {"epic": "EURUSD", "instrumentName": "EUR/USD", "leverage": 20},
+            {"epic": "USDJPY", "instrumentName": "USD/JPY", "leverage": 20},
+            {"epic": "TSLA", "instrumentName": "Tesla Inc", "leverage": 20},
+            {"epic": "AAPL", "instrumentName": "Apple Inc", "leverage": 20},
+            {"epic": "MSFT", "instrumentName": "Microsoft", "leverage": 20},
+            {"epic": "AMZN", "instrumentName": "Amazon", "leverage": 20},
+            {"epic": "META", "instrumentName": "Meta Platforms", "leverage": 20},
+            {"epic": "NVDA", "instrumentName": "NVIDIA", "leverage": 20},
+            {"epic": "GBPUSD", "instrumentName": "GBP/USD", "leverage": 20},
+            {"epic": "AUDUSD", "instrumentName": "AUD/USD", "leverage": 20},
+            {"epic": "USDCHF", "instrumentName": "USD/CHF", "leverage": 20}
+        ]
+        
+        # Market-Filter
+        self.min_daily_volume = 1000000  # Minimales tägliches Handelsvolumen
+        self.max_spread_percent = 0.5    # Maximaler Spread in Prozent
+        
+    def get_tradeable_markets(self) -> List[Dict]:
+        """
+        Gibt die vordefinierten Märkte zurück.
+        """
+        logger.info(f"Analysiere {len(self.markets)} vordefinierte Märkte")
+        return self.markets
+    
+    def calculate_indicators(self, prices: pd.Series) -> Tuple[float, float, float]:
+        """
+        Berechnet RSI und MACD für die gegebenen Preise.
+        """
+        # RSI berechnen
+        delta = prices.diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=self.rsi_period).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=self.rsi_period).mean()
+        rs = gain / loss
+        rsi = 100 - (100 / (1 + rs))
+        
+        # MACD berechnen
+        exp1 = prices.ewm(span=self.macd_fast, adjust=False).mean()
+        exp2 = prices.ewm(span=self.macd_slow, adjust=False).mean()
+        macd = exp1 - exp2
+        signal = macd.ewm(span=self.macd_signal, adjust=False).mean()
+        
+        return rsi.iloc[-1], macd.iloc[-1], signal.iloc[-1]
+    
+    def get_trading_decision(self, rsi: float, macd: float, signal: float, epic: str = None) -> str:
+        """
+        Trifft eine Trading-Entscheidung basierend auf den Indikatoren.
+        Spezielle Logik für XRP.
+        """
+        if epic == "XRPUSD":
+            # Aggressivere Long-Strategie für XRP
+            if rsi < self.xrp_params["rsi_oversold"] and macd > signal:
+                return "BUY"
+            elif rsi > self.xrp_params["rsi_overbought"] and macd < signal:
+                return "SELL"
+            else:
+                # Detailliertes Hold-Signal für XRP
+                if rsi > 50 and macd > signal:
+                    return "HOLD_LONG"  # Bullisher Trend
+                elif rsi < 50 and macd < signal:
+                    return "HOLD_SHORT"  # Bearisher Trend
+                else:
+                    return "HOLD_NEUTRAL"
+        else:
+            # Standard-Strategie für andere Märkte
+            if rsi < self.rsi_oversold and macd > signal:
+                return "BUY"
+            elif rsi > self.rsi_overbought and macd < signal:
+                return "SELL"
+            else:
+                # Detailliertes Hold-Signal für andere Märkte
+                if rsi > 50 and macd > signal:
+                    return "HOLD_LONG"
+                elif rsi < 50 and macd < signal:
+                    return "HOLD_SHORT"
+                else:
+                    return "HOLD_NEUTRAL"
+    
+    def calculate_stop_loss_take_profit(self, current_price: float, direction: str, epic: str = None) -> Tuple[float, float]:
+        """
+        Berechnet Stop Loss und Take Profit Level.
+        Spezielle Werte für XRP.
+        """
+        if epic == "XRPUSD":
+            sl_percent = self.xrp_params["stop_loss_percent"]
+            tp_percent = self.xrp_params["take_profit_percent"]
+        else:
+            sl_percent = self.stop_loss_percent
+            tp_percent = self.take_profit_percent
+            
+        if direction == "BUY":
+            stop_loss = current_price * (1 - sl_percent/100)
+            take_profit = current_price * (1 + tp_percent/100)
+        else:  # SELL
+            stop_loss = current_price * (1 + sl_percent/100)
+            take_profit = current_price * (1 - tp_percent/100)
+        return stop_loss, take_profit
+    
+    def analyze_market(self, market: Dict) -> Tuple[str, float, float, float]:
+        """
+        Analysiert einen einzelnen Markt und gibt Trading-Signal zurück.
+        """
+        epic = market.get("epic")
+        
+        try:
+            # Hole Preishistorie
+            price_history = self.api.get_price_history(epic, resolution="MINUTE", limit=100)
+            if not price_history or not isinstance(price_history, dict):
+                logger.warning(f"Keine gültigen Preisdaten für {epic}")
+                return "HOLD", 0, 0, 0
+
+            prices_data = price_history.get("prices", [])
+            if not prices_data:
+                logger.warning(f"Keine Preisdaten für {epic}")
+                return "HOLD", 0, 0, 0
+
+            # Extrahiere die Schlusskurse
+            close_prices = []
+            for price in prices_data:
+                if isinstance(price, dict) and "closePrice" in price:
+                    try:
+                        close_price = float(price["closePrice"]["bid"])
+                        close_prices.append(close_price)
+                    except (KeyError, ValueError, TypeError):
+                        continue
+
+            if not close_prices:
+                logger.warning(f"Keine gültigen Schlusskurse für {epic}")
+                return "HOLD", 0, 0, 0
+
+            # Konvertiere zu Pandas Series
+            prices = pd.Series(close_prices)
+            
+            # Berechne Indikatoren
+            rsi, macd, signal = self.calculate_indicators(prices)
+            current_price = prices.iloc[-1]
+            
+            # Trading-Entscheidung (mit Epic für XRP-spezifische Logik)
+            decision = self.get_trading_decision(rsi, macd, signal, epic)
+            
+            return decision, current_price, rsi, macd
+            
+        except Exception as e:
+            logger.error(f"Fehler bei der Analyse von {epic}: {str(e)}")
+            return "HOLD", 0, 0, 0
+    
+    def analyze_all_positions(self):
+        """
+        Analysiert alle offenen Positionen und gibt Empfehlungen.
+        """
+        try:
+            # Hole alle offenen Positionen
+            positions = self.api.get_positions()
+            all_positions = positions.get("positions", [])
+            
+            if not all_positions:
+                logger.info("Keine offenen Positionen gefunden.")
+                return
+            
+            logger.info(f"\nGefundene Positionen: {len(all_positions)}")
+            
+            # Analysiere jede Position
+            for position in all_positions:
+                try:
+                    epic = position.get("epic")
+                    if not epic:
+                        logger.warning("Position ohne EPIC gefunden, überspringe...")
+                        continue
+                        
+                    position_id = position.get("dealId")
+                    direction = position.get("direction")
+                    open_price = float(position.get("openLevel", 0))
+                    current_profit = float(position.get("profit", 0))
+                    size = float(position.get("size", 0))
+                    leverage = position.get("leverage", 1)
+                    created_date = position.get("createdDate", "")
+                    market_data = position.get("market", {})
+                    
+                    # Hole aktuelle Marktdaten
+                    price_history = self.api.get_price_history(epic, resolution="MINUTE", limit=100)
+                    if not price_history or not isinstance(price_history, dict):
+                        logger.warning(f"Keine Preisdaten für {epic} verfügbar, überspringe...")
+                        continue
+
+                    # Extrahiere Schlusskurse
+                    close_prices = []
+                    for price in price_history.get("prices", []):
+                        if isinstance(price, dict) and "closePrice" in price:
+                            try:
+                                close_price = float(price["closePrice"]["bid"])
+                                close_prices.append(close_price)
+                            except (KeyError, ValueError, TypeError):
+                                continue
+
+                    if not close_prices:
+                        logger.warning(f"Keine gültigen Schlusskurse für {epic}, überspringe...")
+                        continue
+
+                    # Analysiere Trend
+                    prices = pd.Series(close_prices)
+                    rsi, macd, signal = self.calculate_indicators(prices)
+                    current_price = prices.iloc[-1]
+                    
+                    logger.info(f"\nAnalyse der Position {position_id} ({epic}):")
+                    logger.info(f"Richtung: {direction}")
+                    logger.info(f"Größe: {size}")
+                    logger.info(f"Hebel: {leverage}x")
+                    logger.info(f"Eröffnet am: {created_date}")
+                    logger.info(f"Öffnungspreis: {open_price:.4f}")
+                    logger.info(f"Aktueller Preis: {current_price:.4f}")
+                    logger.info(f"Aktueller Profit: {current_profit:.2f} USD")
+                    logger.info(f"RSI: {rsi:.2f} | MACD: {macd:.4f} | Signal: {signal:.4f}")
+                    
+                    # Entscheidungslogik für Short-Positionen
+                    if direction == "SELL":
+                        if (rsi < 25 or (macd < signal and abs(macd) < abs(signal) * 0.2)) and current_profit > 0:
+                            logger.info("⚠️ Empfehlung: SHORT-Position schließen - Trend könnte sich umkehren")
+                            try:
+                                result = self.api.close_position(position_id)
+                                logger.info(f"✅ Position {position_id} erfolgreich geschlossen. Finaler Profit: {current_profit:.2f} USD")
+                                self.update_trade_stats(current_profit)
+                                log_guv_to_csv(current_profit, f"{epic} {direction} geschlossen")
+                            except Exception as e:
+                                logger.error(f"Fehler beim Schließen der Position {position_id}: {str(e)}")
+                        else:
+                            if macd < signal:
+                                logger.info("ℹ️ SHORT-Position behalten - Bearisher Trend")
+                            else:
+                                logger.info("ℹ️ SHORT-Position behalten - Neutraler Trend")
+                    
+                    # Entscheidungslogik für Long-Positionen
+                    elif direction == "BUY":
+                        if (rsi > 75 or (macd > signal and abs(macd) < abs(signal) * 0.2)) and current_profit > 0:
+                            logger.info("⚠️ Empfehlung: LONG-Position schließen - Trend könnte sich umkehren")
+                            try:
+                                result = self.api.close_position(position_id)
+                                logger.info(f"✅ Position {position_id} erfolgreich geschlossen. Finaler Profit: {current_profit:.2f} USD")
+                                self.update_trade_stats(current_profit)
+                                log_guv_to_csv(current_profit, f"{epic} {direction} geschlossen")
+                            except Exception as e:
+                                logger.error(f"Fehler beim Schließen der Position {position_id}: {str(e)}")
+                        else:
+                            if macd > signal:
+                                logger.info("ℹ️ LONG-Position behalten - Bullisher Trend")
+                            else:
+                                logger.info("ℹ️ LONG-Position behalten - Neutraler Trend")
+                    
+                    # Prüfe auf Stop Loss oder Take Profit
+                    stop_loss = self.xrp_params["stop_loss_percent"] if epic == "XRPUSD" else self.stop_loss_percent
+                    take_profit = self.xrp_params["take_profit_percent"] if epic == "XRPUSD" else self.take_profit_percent
+                    
+                    if current_profit <= -stop_loss:
+                        logger.info(f"⚠️ Stop Loss erreicht für Position {position_id}")
+                        try:
+                            result = self.api.close_position(position_id)
+                            logger.info(f"✅ Position {position_id} geschlossen (Stop Loss)")
+                            self.update_trade_stats(current_profit)
+                            log_guv_to_csv(current_profit, f"{epic} {direction} geschlossen")
+                        except Exception as e:
+                            logger.error(f"Fehler beim Schließen der Position {position_id}: {str(e)}")
+                    elif current_profit >= take_profit:
+                        logger.info(f"✅ Take Profit erreicht für Position {position_id}")
+                        try:
+                            result = self.api.close_position(position_id)
+                            logger.info(f"✅ Position {position_id} geschlossen (Take Profit)")
+                            self.update_trade_stats(current_profit)
+                            log_guv_to_csv(current_profit, f"{epic} {direction} geschlossen")
+                        except Exception as e:
+                            logger.error(f"Fehler beim Schließen der Position {position_id}: {str(e)}")
+                            
+                except Exception as e:
+                    logger.error(f"Fehler bei der Analyse einer einzelnen Position: {str(e)}")
+                    continue
+                
+        except Exception as e:
+            logger.error(f"Fehler bei der Analyse der Positionen: {str(e)}")
+
+    def update_trade_stats(self, profit: float):
+        """
+        Aktualisiert die Trading-Statistiken.
+        """
+        self.total_profit += profit
+        self.hourly_profit += profit
+        self.positions_closed += 1
+        
+        if profit > 0:
+            self.winning_trades += 1
+        else:
+            self.losing_trades += 1
+
+    def check_margin(self):
+        """
+        Überprüft die verfügbare Margin und gibt Warnungen aus.
+        """
+        try:
+            account_info = self.api.get_account_info()
+            for account in account_info.get("accounts", []):
+                if account["currency"] == "USD":
+                    self.current_margin = float(account["balance"]["available"])
+                    self.margin_used = float(account["balance"]["balance"]) - self.current_margin
+                    
+                    if self.current_margin < self.min_margin_required:
+                        logger.warning(f"⚠️ Niedrige Margin: {self.current_margin:.2f} USD verfügbar")
+                        logger.warning(f"Margin verwendet: {self.margin_used:.2f} USD")
+                    else:
+                        logger.info(f"Margin Status: {self.current_margin:.2f} USD verfügbar")
+                        logger.info(f"Margin verwendet: {self.margin_used:.2f} USD")
+        except Exception as e:
+            logger.error(f"Fehler beim Überprüfen der Margin: {str(e)}")
+
+    def print_performance_report(self):
+        """
+        Gibt einen Performance-Report aus.
+        """
+        current_time = datetime.now()
+        if (current_time - self.last_hour_check).total_seconds() >= 3600:  # Jede Stunde
+            win_rate = (self.winning_trades / self.positions_closed * 100) if self.positions_closed > 0 else 0
+            
+            logger.info("\n=== Performance Report ===")
+            logger.info(f"Stündlicher Profit: {self.hourly_profit:.2f} USD")
+            logger.info(f"Gesamtprofit: {self.total_profit:.2f} USD")
+            logger.info(f"Geschlossene Positionen: {self.positions_closed}")
+            logger.info(f"Gewinnrate: {win_rate:.2f}%")
+            logger.info(f"Gewinnbringende Trades: {self.winning_trades}")
+            logger.info(f"Verlustbringende Trades: {self.losing_trades}")
+            logger.info("========================")
+            
+            # Reset stündliche Statistiken
+            self.hourly_profit = 0.0
+            self.last_hour_check = current_time
+
+    def longterm_invest(self):
+        portfolio = {
+            "ETF_SP500": 0.4,
+            "ETF_Nasdaq": 0.3,
+            "Gold_ETF": 0.2,
+            "GreenEnergy_ETF": 0.1
+        }
+
+        longterm_capital = self.capital["longterm"]
+        logger.info(f"📈 Starte Longterm-Investment mit {longterm_capital:.2f} $")
+
+        for asset, weight in portfolio.items():
+            amount = longterm_capital * weight
+            logger.info(f"💸 Investiere {amount:.2f} $ in {asset}")
+            try:
+                self.api.place_longterm_investment(asset, amount)
+            except Exception as e:
+                logger.error(f"❌ Fehler beim Investieren in {asset}: {str(e)}")
+
+
+    def run(self):
+        """
+        Haupttrading-Loop des Bots.
+        """
+
+
+
+        logger.info("Starte Trading Bot...")
+        if not self.longterm_tracker.has_invested():
+            self.longterm_invest()
+            self.longterm_tracker.mark_invested()
+
+
+        while self.running:
+            try:
+                # Überprüfe Margin
+                self.check_margin()
+                
+                # Hole handelbare Märkte
+                markets = self.get_tradeable_markets()
+                
+                # Analysiere jeden Markt
+                for market in markets:
+                    try:
+                        epic = market.get("epic")
+                        logger.info(f"\nAnalysiere Markt: {epic}")
+                        
+                        # Hole aktuelle Marktdaten
+                        decision, current_price, rsi, macd = self.analyze_market(market)
+                        
+                        # Detaillierte Trading-Signal-Ausgabe
+                        if decision == "BUY" and self.daytrade_strategy.should_enter_trade(rsi, macd, signal):
+                            logger.info(f"🟢 BUY Signal für {epic}")
+                            logger.info(f"RSI: {rsi:.2f} | MACD: {macd:.4f}")
+                        elif decision == "SELL" and self.daytrade_strategy.should_enter_trade(rsi, macd, signal):
+                            logger.info(f"🔴 SELL Signal für {epic}")
+                            logger.info(f"RSI: {rsi:.2f} | MACD: {macd:.4f}")
+                        else:
+                            logger.info(f"⚪ HOLD Signal für {epic}")
+                            logger.info(f"RSI: {rsi:.2f} | MACD: {macd:.4f}")
+                        
+                        if decision in ["BUY", "SELL"]:
+                            # Berechne Stop Loss und Take Profit
+                            stop_loss, take_profit = self.calculate_stop_loss_take_profit(
+                                current_price, decision, epic
+                            )
+                            
+                            # Prüfe ob bereits eine Position existiert
+                            positions = self.api.get_positions()
+                            existing_position = any(
+                                p.get("epic") == epic for p in positions.get("positions", [])
+                            )
+
+                            if not existing_position:
+                                try:
+                                    pos_size = self.xrp_params[
+                                        "position_size"] if epic == "XRPUSD" else self.position_size
+
+                                    result = self.api.open_position(
+                                        epic=epic,
+                                        direction=decision,
+                                        size=pos_size,
+                                        stop_loss=stop_loss,
+                                        take_profit=take_profit
+                                    )
+
+                                    self.active_trades[epic] = {
+                                        "entry_time": datetime.now(),
+                                        "entry_price": current_price
+                                    }
+
+                                    logger.info(f"✅ Neue Position eröffnet: {epic} {decision}")
+                                    self.positions_opened += 1
+
+                                except Exception as e:
+                                    logger.error(f"Fehler beim Öffnen der Position für {epic}: {str(e)}")
+                            else:
+                                logger.info(f"Position für {epic} existiert bereits")
+                        
+                        # Warte kurz zwischen den Märkten
+                        time.sleep(1)
+                        
+                    except Exception as e:
+                        logger.error(f"Fehler bei der Analyse von {market.get('epic')}: {str(e)}")
+                        continue
+
+
+                def check_daytrade_exits(self):
+                    now = datetime.now()
+                    for epic, trade in list(self.active_trades.items()):
+                        entry_time = trade["entry_time"]
+                        entry_price = trade["entry_price"]
+                        holding_time = (now - entry_time).total_seconds() / 60  # in Minuten
+
+                        current_price = self.api.get_current_price(epic)
+                        profit = (current_price - entry_price) * trade["size"] if trade["direction"] == "BUY" else (
+                                                    entry_price - current_price) * \
+                                                                                                                   trade[
+                                                                                                                       "size"]
+
+                        logger.info(f"📊 Checke Trade {epic}: Haltedauer {holding_time:.1f} min, Profit: {profit:.2f}")
+
+                        if profit >= 3.0 or profit <= -1.0 or holding_time >= 10:
+                            try:
+                                result = self.api.close_position(epic)
+                                logger.info(
+                                    f"✅ Trade {epic} geschlossen. Grund: {'Take Profit' if profit >= 3 else 'Stop Loss' if profit <= -1 else 'Timeout'}")
+                                del self.active_trades[epic]
+                            except Exception as e:
+                                logger.error(f"Fehler beim Schließen von {epic}: {str(e)}")
+
+                # Analysiere alle bestehenden Positionen
+                self.analyze_all_positions()
+                
+                # Drucke Performance-Report
+                self.print_performance_report()
+                
+                # Warte 10 Sekunden vor der nächsten Iteration
+                logger.info("\nWarte 10 Sekunden vor der nächsten Analyse...")
+                time.sleep(10)
+                
+            except Exception as e:
+                logger.error(f"Kritischer Fehler im Hauptloop: {str(e)}")
+                time.sleep(10)  # Warte bei kritischen Fehlern
+                continue
+    
+    def stop(self):
+        """
+        Stoppt den Trading Bot.
+        """
+        self.running = False
+        logger.info("Trading Bot wird gestoppt...")
+
+def main():
+    # API-Konfiguration
+    API_KEY = "9OuH9DDWAgZ1EXGN"
+    ACCOUNT_ID = "stefankobel90@outlook.com"
+    PASSWORD = "Roxanne90?!"
+
+    api = CapitalComAPI(API_KEY, ACCOUNT_ID, PASSWORD)
+    api.authenticate()
+    bot = TradingBot(api)
+    bot.run()
+
+    try:
+        # Initialisiere API
+        api = CapitalComAPI(API_KEY, ACCOUNT_ID, PASSWORD)
+        
+        # Starte API-Session
+        api.start_session()
+        
+        # Erstelle und starte Bot
+        bot = TradingBot(api)
+        
+        # Signal Handler für sauberes Beenden
+        def signal_handler(signum, frame):
+            logger.info("Signal empfangen, stoppe Bot...")
+            bot.stop()
+            api.stop_session()
+            sys.exit(0)
+        
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
+        
+        # Starte Bot
+        bot.run()
+        
+    except Exception as e:
+        logger.error(f"Kritischer Fehler beim Starten des Bots: {str(e)}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main() 

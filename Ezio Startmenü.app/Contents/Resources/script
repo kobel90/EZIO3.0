@@ -1,0 +1,59 @@
+# ezio_startmenü.py
+import os
+import sys
+
+# Dynamischer Pfad relativ zum aktuellen Skript (auch im Platypus-Bundle korrekt!)
+base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+libs_path = os.path.join(base_path, "libs")
+sys.path.insert(0, libs_path)
+
+# Jetzt klappt der Import garantiert:
+from colorama import Fore, Style, init
+init(autoreset=True)
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def print_banner():
+    print(f"""{Fore.MAGENTA}
+███████╗███████╗██╗███████╗ ██████╗     
+██╔════╝██╔════╝██║██╔════╝██╔════╝     
+███████╗█████╗  ██║█████╗  ██║  ███╗    
+╚════██║██╔══╝  ██║██╔══╝  ██║   ██║    
+███████║███████╗██║███████╗╚██████╔╝    
+╚══════╝╚══════╝╚═╝╚══════╝ ╚═════╝     
+{Style.RESET_ALL}
+         {Fore.YELLOW}>>> EZIO 4.0 – KI-Trading Engine <<<{Style.RESET_ALL}
+""")
+
+def main_menu():
+    while True:
+        clear_screen()
+        print_banner()
+        print(f"{Fore.CYAN}1. START EZIO TRADINGBOT")
+        print(f"2. AVELINE (Manueller Lernmodus)")
+        print(f"3. ALOY (Automatischer Lernmodus)")
+        print(f"4. SETTINGS")
+        print(f"5. EXIT{Style.RESET_ALL}")
+        auswahl = input("\n🕹️  Auswahl (1–5): ").strip()
+
+        if auswahl == "1":
+            os.system("python3 trading_bot_V4.py")  # ggf. Pfad anpassen
+        elif auswahl == "2":
+            os.system("python3 trading_bot_V4.py")  # läuft bereits CLI-Lerninterface
+        elif auswahl == "3":
+            os.system("python3 trading_bot_V4.py auto")  # ggf. Autolernflag integrieren
+        elif auswahl == "4":
+            print("\n⚙️  Einstellungen folgen bald...")
+            input("Drücke Enter, um zurückzukehren.")
+        elif auswahl == "5":
+            print("\n👋 Bis bald, Commander!")
+            sys.exit(0)
+        else:
+            print(f"{Fore.RED}❌ Ungültige Auswahl.")
+            input("Enter drücken...")
+
+if __name__ == "__main__":
+    main_menu()
+
+    input("\nDrücke Enter zum Beenden...")

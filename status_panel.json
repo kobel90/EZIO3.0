@@ -1,0 +1,20 @@
+{
+  "zeit": "2025-04-07T09:20:20.340516",
+  "modus": "mixed",
+  "equity": 0.0,
+  "margin": {
+    "verfuegbar": 0.0,
+    "genutzt": 0.0
+  },
+  "profit": {
+    "gesamt": 0.0,
+    "stunde": 0.0,
+    "pnl_ratio": 0.0
+  },
+  "trades": {
+    "gewinn": 0,
+    "verlust": 0,
+    "rate": 0
+  },
+  "signale": []
+}

@@ -1,0 +1,3 @@
+epic,price,volumen,volumen_schnitt,rsi,macd,signal,ema50,ema200,support,resistance,fibonacci,nachrichten
+AAPL,180.5,1200000,950000,38,1.2,0.8,175,165,179,183,"178,181","Apple beats expectations, bullish outlook"
+MSFT,330.1,800000,950000,60,0.3,0.6,328,332,327,335,"331","Microsoft crash risk after lawsuit"

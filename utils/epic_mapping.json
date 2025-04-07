@@ -1,0 +1,77 @@
+{
+  "AAPL": {
+    "capital": "AAPL",
+    "finnhub": "AAPL",
+    "yfinance": "AAPL"
+  },
+  "TSLA": {
+    "capital": "TSLA",
+    "finnhub": "TSLA",
+    "yfinance": "TSLA"
+  },
+  "EURUSD": {
+    "capital": "EURUSD",
+    "finnhub": "OANDA:EUR_USD",
+    "yfinance": "EURUSD=X"
+  },
+  "BTCUSD": {
+    "capital": "BTCUSD",
+    "finnhub": "BINANCE:BTCUSDT",
+    "yfinance": "BTC-USD"
+  },
+  "ETHUSD": {
+    "capital": "ETHUSD",
+    "finnhub": "BINANCE:ETHUSDT",
+    "yfinance": "ETH-USD"
+  },
+  "XRPUSD": {
+    "capital": "XRPUSD",
+    "finnhub": "BINANCE:XRPUSDT",
+    "yfinance": "XRP-USD"
+  },
+  "US500": {
+    "capital": "US500",
+    "finnhub": "US500",
+    "yfinance": "^GSPC"
+  },
+  "USDJPY": {
+    "capital": "USDJPY",
+    "finnhub": "USDJPY",
+    "yfinance": "JPY=X"
+  },
+  "MSFT": {
+    "capital": "MSFT",
+    "finnhub": "MSFT",
+    "yfinance": "MSFT"
+  },
+  "AMZN": {
+    "capital": "AMZN",
+    "finnhub": "AMZN",
+    "yfinance": "AMZN"
+  },
+  "META": {
+    "capital": "META",
+    "finnhub": "META",
+    "yfinance": "META"
+  },
+  "NVDA": {
+    "capital": "NVDA",
+    "finnhub": "NVDA",
+    "yfinance": "NVDA"
+  },
+  "GBPUSD": {
+    "capital": "GBPUSD",
+    "finnhub": "GBPUSD",
+    "yfinance": "GBPUSD=X"
+  },
+  "AUDUSD": {
+    "capital": "AUDUSD",
+    "finnhub": "AUDUSD",
+    "yfinance": "AUDUSD=X"
+  },
+  "USDCHF": {
+    "capital": "USDCHF",
+    "finnhub": "USDCHF",
+    "yfinance": "USDCHF=X"
+  }
+}
