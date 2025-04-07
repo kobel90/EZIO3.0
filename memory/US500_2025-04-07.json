@@ -1,6 +1,33 @@
 [
   {
-    "zeit": "2025-04-07T04:46:44.222437",
-    "text": "\u274c Fehler beim Signal: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."
+    "zeit": "2025-04-07T19:48:52.358552",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:52.602571",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 5 Min (Vola: 14.04)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:52.603585",
+    "text": "\ud83d\udcca Risikobewertung: MITTEL (Score=1.00)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:52.603697",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-07T19:48:52.603778",
+    "typ": "signal",
+    "epic": "US500",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 5,
+    "risiko": "MITTEL",
+    "symbol_finnhub": "US500",
+    "symbol_yfinance": "^GSPC",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00316,
+    "spike": false
   }
 ]
