@@ -91,12 +91,7 @@ class PriceSourceManager:
             if df is not None and not df.empty:
                 print(f"✅ Preisreihe via yfinance geladen für {epic} (Zeilen: {len(df)})")
                 return df
-            print(f"⚠️ Fallback auf Finnhub für {epic}")
-            df_fallback = self.get_price_series_finnhub(epic, days=days)
-            if df_fallback is not None and not df_fallback.empty:
-                print(f"✅ Preisreihe via Finnhub geladen für {epic} (Zeilen: {len(df_fallback)})")
-                return df_fallback
-            raise ValueError("Keine gültige Preisreihe gefunden.")
+            raise ValueError("Keine gültige Preisreihe über yfinance gefunden.")
         except Exception as e:
             print(f"❌ Fehler beim Laden der Preisreihe für {epic}: {e}")
             return None
