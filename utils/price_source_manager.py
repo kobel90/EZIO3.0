@@ -156,12 +156,12 @@ class PriceSourceManager:
                 if "close" in s.columns and not s["close"].empty:
                     valid_series.append(s["close"])
                 else:
-                    print(f"⚠️ '{source_name}' → DataFrame aber keine gültige 'close'-Spalte oder leer.")
+                    print(f"⚠️ '{source_name}' → DataFrame aber keine gültige 'close'-Spalte oder leer. Epic: {epic}")
             else:
-                print(f"⚠️ '{source_name}' → Ungültiger Typ: {type(s)}")
+                print(f"⚠️ '{source_name}' → Ungültiger Typ: {type(s)} (Epic: {epic})")
 
         if not valid_series:
-            print(f"⚠️ Keine gültigen Preisreihen vorhanden – Epic: {epic}")
+            print(f"❌ Keine gültigen Preisreihen vorhanden für Epic: {epic}")
             return None
 
         combined = pd.concat(valid_series, axis=1).mean(axis=1)
