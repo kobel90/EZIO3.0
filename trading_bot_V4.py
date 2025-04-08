@@ -633,7 +633,7 @@ class TradingBotV4:
             stop_loss, take_profit = self.calculate_stop_loss_take_profit(current_price, direction, epic)
 
             # Order senden
-            result = self.api.sende_order(
+            result = self.api.place_order(
                 epic=epic,
                 direction=direction,
                 size=size,
