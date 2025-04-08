@@ -40,17 +40,6 @@ class PriceSourceManager:
         print(f"⛔ Kein Preis ermittelbar für {epic} über yfinance.")
         return None
 
-    def log_price_source_score(self, source: str, epic: str, price: float, average: float):
-        if not hasattr(self, "source_scores"):
-            self.source_scores = {}
-        if source not in self.source_scores:
-            self.source_scores[source] = []
-        abweichung = abs(price - average)
-        self.source_scores[source].append(abweichung)
-        letzte = self.source_scores[source][-10:]
-        mean_deviation = sum(letzte) / len(letzte)
-        print(f"📊 Quelle: {source} | Abweichung: {abweichung:.4f} | Ø (letzte 10): {mean_deviation:.4f}")
-
     def get_price_series_yfinance(self, epic: str, days: int = 30, interval: str = "1d") -> Optional[pd.DataFrame]:
         try:
             symbol = self.mapping[epic]["yfinance"]
