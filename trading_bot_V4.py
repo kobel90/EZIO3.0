@@ -419,7 +419,7 @@ class TradingBotV4:
                     continue
 
                 tage = 30  # z. B. dynamisch aus Settings
-                preise_series = self.price_manager.get_combined_price_series(epic, days=tage)
+                preise_series = self.price_manager.get_combined_price_series(epic)
 
                 # ❗Robuste Prüfung:
                 if preise_series is None or (hasattr(preise_series, "empty") and preise_series.empty):
