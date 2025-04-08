@@ -591,39 +591,47 @@ class TradingBotV4:
 
         epic = signal.get("epic")
         direction = signal.get("direction")
-        size = signal.get("size")
-        if not size:
-            result = self.api.berechne_trade_groesse(epic)
-            size = result.get("anzahl", 0.0) if isinstance(result, dict) else result
-        if isinstance(result, dict):
-            preis = result["preis"]
-            min_deal_size = result["min_deal_size"]
-            self.trading_ki.memory.speichere(epic, {
-                "order_details": result
-            })
         confidence = signal.get("confidence", 0.0)
         dauer = signal.get("dauer", 3)
-        risiko = signal.get("risiko", 0.0)
+        risiko = signal.get("risiko", "MITTEL")
+
+        # 🧮 Tradegröße berechnen oder übernehmen
+        größe_result = signal.get("size")
+        if not größe_result:
+            größe_result = self.api.berechne_trade_groesse(epic)
+        if isinstance(größe_result, dict):
+            size = größe_result.get("anzahl", 0.0)
+            preis = größe_result.get("preis", "?")
+            min_deal_size = größe_result.get("min_deal_size", "?")
+            self.trading_ki.memory.speichere(epic, {"order_details": größe_result})
+        else:
+            size = größe_result
+            preis = "?"
+            min_deal_size = "?"
+
+        if size == 0.0:
+            print(f"{Fore.RED}⚠️ Keine gültige Tradegröße für {epic}. Order wird abgebrochen.{Style.RESET_ALL}")
+            return
 
         print(
-            f"📤 Sende Order: {epic} → {direction} | Größe: {size:.2f} | Confidence: {confidence:.2f} | Dauer: {dauer}min | Risiko: {risiko}")
+            f"📤 Sende Order: {epic} → {direction} | Größe: {size:.2f} | Preis: {preis} | Conf: {confidence:.2f} | Dauer: {dauer}min | Risiko: {risiko}")
 
         try:
-            # Mindestgröße prüfen
+            # ✅ Mindestgröße prüfen
             markt_info = self.api.get_market_info(epic)
             min_unit = float(markt_info.get("minDealSize", 1))
             if not self.api.pruefe_mindestgroesse(epic, size, min_unit):
-                print(f"{Fore.YELLOW}⚠️ Größe unter Minimum! Order abgebrochen.{Style.RESET_ALL}")
+                print(f"{Fore.YELLOW}⚠️ Größe unter Mindestgröße. Order abgebrochen.{Style.RESET_ALL}")
                 return
 
-            # Offene Position prüfen
+            # ✅ Bereits offene Position prüfen
             positions = self.api.get_positions()
             already_open = any(p.get("epic") == epic for p in positions.get("positions", []))
             if already_open:
                 print(f"{Fore.YELLOW}⚠️ Position für {epic} bereits offen.{Style.RESET_ALL}")
                 return
 
-            # Historische Preise holen
+            # 📈 Preisverlauf abrufen (für SL/TP)
             price_data = self.api.get_price_history(epic, resolution="MINUTE", limit=100)
             if not price_data or "prices" not in price_data:
                 print(f"⚠️ Keine Preisdaten für {epic} – SL/TP kann nicht berechnet werden.")
@@ -634,7 +642,6 @@ class TradingBotV4:
                 for p in price_data["prices"]
                 if isinstance(p.get("closePrice"), dict) and "bid" in p["closePrice"]
             ]
-
             if not prices:
                 print(f"{Fore.RED}❌ Keine gültigen Preisdaten für {epic}.{Style.RESET_ALL}")
                 return
@@ -642,7 +649,7 @@ class TradingBotV4:
             current_price = prices[-1]
             stop_loss, take_profit = self.calculate_stop_loss_take_profit(current_price, direction, epic)
 
-            # Order senden
+            # ✅ Order senden
             result = self.api.place_order(
                 epic=epic,
                 direction=direction,
@@ -655,7 +662,7 @@ class TradingBotV4:
                 print(
                     f"{Fore.GREEN}✅ Position geöffnet: {epic} ({direction}) | SL: {stop_loss:.2f}, TP: {take_profit:.2f}{Style.RESET_ALL}")
 
-                # KI-Memory
+                # 🧠 Memory speichern
                 self.trading_ki.memory.speichere_signal(epic, {
                     "zeit": datetime.now().isoformat(),
                     "richtung": direction,
@@ -663,15 +670,17 @@ class TradingBotV4:
                     "groesse": size,
                     "confidence": confidence,
                     "risiko": risiko,
-                    "dauer": dauer,
+                    "dauer": dauer
                 })
 
-                # UI-Feedback
+                # 🖥 UI + Ton
                 popup_nachricht("📈 Neues Signal", f"{epic} → {direction} ({confidence * 100:.0f}%)")
                 spiele_ton()
 
-                # Logging
+                # 📘 Logging
                 self.logge_gewinn(epic, 0.0, confidence, risiko, dauer)
+
+                # 📊 Trades verwalten
                 self.positions_opened += 1
                 self.active_trades[epic] = {
                     "entry_time": datetime.now(),
