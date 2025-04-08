@@ -69,43 +69,13 @@ class CapitalComAPI:
         self.last_request_time = datetime.now()
         self.request_count += 1
 
-    def send_request(self, epic: str, direction: str, size: float,
-                     stop_loss: Optional[float] = None,
-                     take_profit: Optional[float] = None) -> Optional[Dict[str, Any]]:
+    def send_request(self, method: str, endpoint: str,
+                     data: Optional[dict] = None,
+                     params: Optional[dict] = None) -> Optional[requests.Response]:
         """
-        Wrapper für Order-Platzierung – nutzt send_http_request intern.
+        Zentraler Request-Wrapper – funktioniert für alle HTTP-Methoden (GET, POST, DELETE)
         """
-        if not self.cst or not self.security_token:
-            logger.warning("⚠️ Nicht authentifiziert. Order wird nicht gesendet.")
-            return None
-
-        order_payload = {
-            "epic": epic,
-            "direction": direction,
-            "size": str(size),
-            "orderType": "MARKET",
-            "currencyCode": "USD",
-            "guaranteedStop": False,
-            "forceOpen": True,
-            "stopLevel": str(round(stop_loss, 4)) if stop_loss else None,
-            "profitLevel": str(round(take_profit, 4)) if take_profit else None
-        }
-
-        order_payload = {k: v for k, v in order_payload.items() if v is not None}
-        endpoint = "/api/v1/positions"
-
-        response = self.send_http_request("POST", endpoint, data=order_payload)
-
-        if response and response.status_code == 200:
-            try:
-                return response.json()
-            except json.JSONDecodeError:
-                logger.error("❌ JSON-Fehler bei Order-Antwort.")
-                return None
-        else:
-            logger.error(
-                f"❌ Order fehlgeschlagen – Status: {response.status_code if response else 'keine Antwort'}")
-            return None
+        return self.send_http_request(method, endpoint, data=data, params=params)
 
     def send_http_request(self, method: str, endpoint: str, data=None, params=None, headers=None, timeout=5) -> \
     Optional[requests.Response]:
