@@ -199,7 +199,7 @@ class TradingKI:
         confidence = round(score / 5.0, 2)
         return confidence
 
-    def berechne_trade_groesse(self, epic: str, kapital: float, confidence: float) -> float:
+    def berechne_trade_groesse(self, epic: str, kapital: float, confidence: float) -> Dict[str, float]:
         """
         Berechnet die Trade-Größe unter Berücksichtigung von Kapital & Confidence.
         - max 40 % von 80 % von 2/3 Kapital
