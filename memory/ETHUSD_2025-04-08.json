@@ -362,5 +362,32 @@
   {
     "zeit": "2025-04-08T12:08:04.029468",
     "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:08:04.150114",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 5 Min (Vola: 5.98)"
+  },
+  {
+    "zeit": "2025-04-08T12:08:04.151096",
+    "text": "\ud83d\udcca Risikobewertung: MITTEL (Score=1.00)"
+  },
+  {
+    "zeit": "2025-04-08T12:08:04.151449",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:08:04.151752",
+    "typ": "signal",
+    "epic": "ETHUSD",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 5,
+    "risiko": "MITTEL",
+    "symbol_finnhub": "BINANCE:ETHUSDT",
+    "symbol_yfinance": "ETH-USD",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00435,
+    "spike": false
   }
 ]
