@@ -591,7 +591,10 @@ class TradingBotV4:
 
         epic = signal.get("epic")
         direction = signal.get("direction")
-        size = signal.get("size") or self.api.berechne_trade_groesse(epic)
+        size = signal.get("size")
+        if not size:
+            result = self.api.berechne_trade_groesse(epic)
+            size = result.get("anzahl", 0.0) if isinstance(result, dict) else result
         confidence = signal.get("confidence", 0.0)
         dauer = signal.get("dauer", 3)
         risiko = signal.get("risiko", 0.0)
