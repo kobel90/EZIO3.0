@@ -22,12 +22,12 @@ class StatusPanel:
         master.geometry("300x250")
         master.resizable(False, False)
 
-        self.pnl_label = ttk.Label(master, text="📈 PnL heute: ...")
-        self.ziel_label = ttk.Label(master, text="❤️ Zielstatus: ...")
+        self.pnl_label = ttk.Label(master, text="PnL heute: ...")
+        self.ziel_label = ttk.Label(master, text="Zielstatus: ...")
         self.progress = ttk.Progressbar(master, orient="horizontal", length=200, mode="determinate")
-        self.time_label = ttk.Label(master, text="🕓 Letztes Update: ...")
-        self.status_label = ttk.Label(master, text="🟢 Bot läuft")
-        self.stop_button = ttk.Button(master, text="🔴 Bot stoppen", command=self.stop_bot)
+        self.time_label = ttk.Label(master, text="Letztes Update: ...")
+        self.status_label = ttk.Label(master, text="Bot läuft")
+        self.stop_button = ttk.Button(master, text="Bot stoppen", command=self.stop_bot)
 
         self.pnl_label.pack(pady=3)
         self.ziel_label.pack(pady=3)
@@ -41,7 +41,7 @@ class StatusPanel:
     def stop_bot(self):
         global BOT_RUNNING_FLAG
         BOT_RUNNING_FLAG = False
-        self.status_label.config(text="🔴 Bot gestoppt")
+        self.status_label.config(text="Bot gestoppt")
         self.stop_button.config(state=tk.DISABLED)
 
     def get_heutiger_gewinn(self):
@@ -78,7 +78,7 @@ class StatusPanel:
         self.pnl_label.config(text=f"📈 PnL heute: {gewinn} $")
         self.ziel_label.config(text=f"❤️ Zielstatus: {ziel_status}")
         self.time_label.config(text=f"🕓 Letztes Update: {jetzt}")
-        self.status_label.config(text="🟢 Bot läuft" if BOT_RUNNING_FLAG else "🔴 Bot gestoppt")
+        self.status_label.config(text="Bot läuft" if BOT_RUNNING_FLAG else "Bot gestoppt")
 
         self.master.after(5000, self.update_loop)
 
@@ -111,7 +111,7 @@ class StatusPanel:
                         print(f"– {s['epic']}: {s['direction']} ({s['confidence']})")
 
             except Exception as e:
-                print(f"{Fore.RED}⚠️ Fehler beim Einlesen der Statusdatei: {e}{Style.RESET_ALL}")
+                print(f"{Fore.RED}Fehler beim Einlesen der Statusdatei: {e}{Style.RESET_ALL}")
 
             time.sleep(interval)
 
@@ -132,7 +132,7 @@ class StatusPanel:
         try:
             df = pd.read_json("status_panel.json")  # oder dein korrekter Pfad
         except Exception as e:
-            print(f"❌ Fehler beim Laden der Dashboard-Datei: {e}")
+            print(f"Fehler beim Laden der Dashboard-Datei: {e}")
             return
 
         if "Datum" in df.columns:
