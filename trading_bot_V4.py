@@ -418,7 +418,7 @@ class TradingBotV4:
                     print(f"⛔ Preis für {epic} konnte nicht ermittelt werden.")
                     continue
 
-                preise_series = self.price_manager.get_combined_price_series(epic, limit=100)
+                preise_series = self.price_manager.get_combined_price_series(epic)
 
                 # ❗Robuste Prüfung:
                 if preise_series is None or (hasattr(preise_series, "empty") and preise_series.empty):
