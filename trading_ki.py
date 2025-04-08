@@ -79,7 +79,6 @@ class TradingKI:
         """
         symbol_info = self.price_manager.mapping.get(epic, {
             "capital": epic,
-            "finnhub": epic,
             "yfinance": epic
         })
         return symbol_info
