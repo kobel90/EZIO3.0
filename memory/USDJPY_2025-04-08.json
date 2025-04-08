@@ -560,5 +560,32 @@
   {
     "zeit": "2025-04-08T11:56:44.811953",
     "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T11:56:44.962431",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 30 Min (Vola: 0.07)"
+  },
+  {
+    "zeit": "2025-04-08T11:56:44.965159",
+    "text": "\ud83d\udcca Risikobewertung: NIEDRIG (Score=1.80)"
+  },
+  {
+    "zeit": "2025-04-08T11:56:44.966745",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T11:56:44.968183",
+    "typ": "signal",
+    "epic": "USDJPY",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 30,
+    "risiko": "NIEDRIG",
+    "symbol_finnhub": "USDJPY",
+    "symbol_yfinance": "JPY=X",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00072,
+    "spike": false
   }
 ]
