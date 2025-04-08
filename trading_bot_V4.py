@@ -597,7 +597,7 @@ class TradingBotV4:
         risiko = signal.get("risiko", 0.0)
 
         print(
-            f"📤 Sende Order: {epic} → {direction} | Größe: {size:.2f} | Confidence: {confidence:.2f} | Dauer: {dauer}min | Risiko: {risiko:.2f}")
+            f"📤 Sende Order: {epic} → {direction} | Größe: {size:.2f} | Confidence: {confidence:.2f} | Dauer: {dauer}min | Risiko: {risiko}")
 
         try:
             # Mindestgröße prüfen
