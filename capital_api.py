@@ -438,7 +438,10 @@ class CapitalComAPI:
         return 0.0
 
     def berechne_trade_groesse(self, epic: str, debug: bool = False, longterm: bool = False) -> float:
-        verfuegbar = available_capital * (2 / 3) * (0.8 if not longterm else 1.0)
+        available_capital = self.get_available_capital()
+        if available_capital <= 0:
+            logger.warning("⚠️ Kein verfügbares Kapital – Tradegröße = 0")
+            return 0.0
         """
         Berechnet die empfohlene Tradegröße für ein EPIC anhand:
         - verfügbarem Kapital (in CHF)
