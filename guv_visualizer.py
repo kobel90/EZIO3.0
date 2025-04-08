@@ -23,7 +23,7 @@ def zeige_guv_verlauf(csv_datei="guv_log.csv"):
 
         # 3. Prüfen auf leeren DataFrame
         if df.empty:
-            print("⚠️ Keine gültigen GUV-Daten zum Anzeigen vorhanden.")
+            print("Keine gültigen GUV-Daten zum Anzeigen vorhanden.")
             return
 
         # 4. Kumulierte GUV-Linie zeichnen
@@ -33,7 +33,7 @@ def zeige_guv_verlauf(csv_datei="guv_log.csv"):
         plt.axhline(y=0, color="gray", linestyle="--")
         plt.xlabel("Zeit")
         plt.ylabel("CHF")
-        plt.title("📈 Gewinn-/Verlustverlauf")
+        plt.title("Gewinn-/Verlustverlauf")
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
@@ -49,13 +49,13 @@ def zeige_guv_verlauf(csv_datei="guv_log.csv"):
         if not heatmap_data.empty:
             plt.figure(figsize=(12, 6))
             sns.heatmap(heatmap_data, annot=True, fmt=".2f", cmap="RdYlGn", center=0)
-            plt.title("📅 Heatmap Tagesgewinne (nach Woche & Wochentag)")
+            plt.title("Heatmap Tagesgewinne (nach Woche & Wochentag)")
             plt.xlabel("Wochentag")
             plt.ylabel("Woche")
             plt.tight_layout()
             plt.show()
         else:
-            print("📊 Keine Heatmap-Daten vorhanden (alle Gewinne = 0 oder leer).")
+            print("Keine Heatmap-Daten vorhanden (alle Gewinne = 0 oder leer).")
 
     except Exception as e:
         print(f"❌ Fehler beim Zeichnen des GUV-Verlaufs: {e}")
@@ -83,7 +83,7 @@ def zeige_gewinnverlauf():
 
     plt.figure(figsize=(8, 4))
     plt.plot(df["datum"], df["gewinn"], marker="o", linestyle="-", color="blue")
-    plt.title("📈 Täglicher Gewinnverlauf")
+    plt.title("Täglicher Gewinnverlauf")
     plt.xlabel("Datum")
     plt.ylabel("Gewinn (CHF)")
     plt.grid(True)
