@@ -1,9 +1,73 @@
 [
   {
-    "zeit": "2025-04-08 12:07:07",
-    "gewinn": 0.0,
+    "zeit": "2025-04-08T12:07:04.728446",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:04.803885",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 30 Min (Vola: 0.00)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:04.804514",
+    "text": "\ud83d\udcca Risikobewertung: NIEDRIG (Score=1.80)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:04.804614",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:04.804696",
+    "typ": "signal",
+    "epic": "GBPUSD",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 30,
+    "risiko": "NIEDRIG",
+    "symbol_finnhub": "GBPUSD",
+    "symbol_yfinance": "GBPUSD=X",
+    "trend": "aufw\u00e4rts",
+    "volatilitaet": 0.00055,
+    "spike": false
+  },
+  {
+    "zeit": "2025-04-08T12:07:07.497916",
+    "richtung": "SELL",
+    "preis": 1.27557,
+    "groesse": 320.0,
     "confidence": 0.8,
     "risiko": "NIEDRIG",
     "dauer": 30
+  },
+  {
+    "zeit": "2025-04-08T12:07:10.730555",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:10.807349",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 30 Min (Vola: 0.00)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:10.808040",
+    "text": "\ud83d\udcca Risikobewertung: NIEDRIG (Score=1.80)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:10.808184",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:10.808353",
+    "typ": "signal",
+    "epic": "GBPUSD",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 30,
+    "risiko": "NIEDRIG",
+    "symbol_finnhub": "GBPUSD",
+    "symbol_yfinance": "GBPUSD=X",
+    "trend": "aufw\u00e4rts",
+    "volatilitaet": 0.00055,
+    "spike": false
   }
 ]
