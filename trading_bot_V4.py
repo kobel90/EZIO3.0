@@ -662,6 +662,8 @@ class TradingBotV4:
                 print(
                     f"{Fore.GREEN}✅ Position geöffnet: {epic} ({direction}) | SL: {stop_loss:.2f}, TP: {take_profit:.2f}{Style.RESET_ALL}")
 
+
+
                 # 🧠 Memory speichern
                 self.trading_ki.memory.speichere_signal(epic, {
                     "zeit": datetime.now().isoformat(),
