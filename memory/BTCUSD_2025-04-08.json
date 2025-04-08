@@ -370,5 +370,36 @@
     "trend": "abw\u00e4rts",
     "volatilitaet": 0.00303,
     "spike": false
+  },
+  {
+    "zeit": "2025-04-08T12:12:11.677418",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:12:11.802294",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 5 Min (Vola: 165.07)"
+  },
+  {
+    "zeit": "2025-04-08T12:12:11.809586",
+    "text": "\ud83d\udcca Risikobewertung: MITTEL (Score=1.00)"
+  },
+  {
+    "zeit": "2025-04-08T12:12:11.810102",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:12:11.810480",
+    "typ": "signal",
+    "epic": "BTCUSD",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 5,
+    "risiko": "MITTEL",
+    "symbol_finnhub": "BINANCE:BTCUSDT",
+    "symbol_yfinance": "BTC-USD",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00303,
+    "spike": false
   }
 ]
