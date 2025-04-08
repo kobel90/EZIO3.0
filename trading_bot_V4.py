@@ -696,6 +696,7 @@ class TradingBotV4:
 
         except Exception as e:
             print(f"{Fore.RED}🔥 Fehler beim Öffnen der Position: {e}{Style.RESET_ALL}")
+            
     def logge_gewinn(self, epic: str, gewinn: float, confidence: float, risiko: float, dauer: int):
         """Loggt das Ergebnis eines abgeschlossenen Trades in Memory & CSV."""
         from memory_module import MemoryModule
