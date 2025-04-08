@@ -63,7 +63,8 @@ def main_menu():
         console.print("[cyan]2.[/] AVELINE (Manueller Lernmodus)")
         console.print("[cyan]3.[/] ALOY (Automatischer Lernmodus)")
         console.print("[cyan]4.[/] SL/TP EDITOR")
-        console.print("[red]5.[/] EXIT")
+        console.print("[cyan]5.[/] STATUS & ZIEL EINSTELLUNGEN")
+        console.print("[red]6.[/] EXIT")
 
         auswahl = Prompt.ask(
             "\n[bold]Auswahl[/bold]",
