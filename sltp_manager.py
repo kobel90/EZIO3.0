@@ -49,3 +49,7 @@ class SLTPManager:
             }
             self.save_config()
             self.log_change(asset, sl_old, sl, tp_old, tp)
+
+    def get_params(self, epic: str) -> dict:
+        return self.config.get(epic,
+                               self.config.get("default", {"stop_loss_percent": 0.03, "take_profit_percent": 0.05}))
