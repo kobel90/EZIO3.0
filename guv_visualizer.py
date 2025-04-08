@@ -60,33 +60,36 @@ def zeige_guv_verlauf(csv_datei="guv_log.csv"):
     except Exception as e:
         print(f"❌ Fehler beim Zeichnen des GUV-Verlaufs: {e}")
 
-    def lade_guv_daten(pfad: str = "guv_log.csv") -> pd.DataFrame:
-        try:
-            df = pd.read_csv(pfad)
-            if "datum" in df.columns:
-                df["datum"] = pd.to_datetime(df["datum"])
-                df = df.sort_values("datum")
-                return df
-            else:
-                print("⚠️ Spalte 'datum' fehlt in guv_log.csv")
-                return pd.DataFrame()
-        except Exception as e:
-            print(f"❌ Fehler beim Laden von G/V-Daten: {e}")
+def lade_guv_daten(pfad: str = "guv_log.csv") -> pd.DataFrame:
+    try:
+        df = pd.read_csv(pfad, sep=";", names=["datum", "epic", "gewinn", "confidence", "risiko", "dauer"], skiprows=1)
+        if "datum" in df.columns:
+            df["datum"] = pd.to_datetime(df["datum"], errors="coerce")
+            df = df.dropna(subset=["datum"])
+            df = df.sort_values("datum")
+            return df
+        else:
+            print("⚠️ Spalte 'datum' fehlt in guv_log.csv")
             return pd.DataFrame()
+    except Exception as e:
+        print(f"❌ Fehler beim Laden von G/V-Daten: {e}")
+        return pd.DataFrame()
 
-    def zeige_gewinnverlauf():
-        df = lade_guv_daten()
-        if df.empty:
-            return
+def zeige_gewinnverlauf():
+    df = lade_guv_daten()
+    if df.empty:
+        print("⚠️ Keine Daten für Gewinnverlauf.")
+        return
 
-        plt.figure(figsize=(8, 4))
-        plt.plot(df["datum"], df["gewinn"], marker="o", linestyle="-")
-        plt.title("Täglicher Gewinnverlauf")
-        plt.xlabel("Datum")
-        plt.ylabel("Gewinn (CHF)")
-        plt.grid(True)
-        plt.tight_layout()
-        plt.show()
+    plt.figure(figsize=(8, 4))
+    plt.plot(df["datum"], df["gewinn"], marker="o", linestyle="-", color="blue")
+    plt.title("📈 Täglicher Gewinnverlauf")
+    plt.xlabel("Datum")
+    plt.ylabel("Gewinn (CHF)")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
 
-        if __name__ == "__main__":
-            zeige_gewinnverlauf()
+if __name__ == "__main__":
+    zeige_guv_verlauf()     # Zeigt Verlauf & Heatmap
+    zeige_gewinnverlauf()   # Zeigt einfachen Tagesverlauf
