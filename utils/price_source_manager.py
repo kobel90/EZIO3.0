@@ -85,18 +85,6 @@ class PriceSourceManager:
             return epic
         return symbol
 
-    def get_finnhub_resolution(self, days: int) -> str:
-        if days <= 5:
-            return "5"
-        elif days <= 10:
-            return "15"
-        elif days <= 30:
-            return "30"
-        elif days <= 90:
-            return "60"
-        else:
-            return "D"
-
     def get_best_price_series(self, epic: str, days: int = 30) -> Optional[pd.DataFrame]:
         try:
             df = self.get_price_series_yfinance(epic, days=days)
