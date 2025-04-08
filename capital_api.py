@@ -438,6 +438,7 @@ class CapitalComAPI:
         return 0.0
 
     def berechne_trade_groesse(self, epic: str, debug: bool = False, longterm: bool = False) -> float:
+        
         """
         Berechnet die empfohlene Tradegröße für ein EPIC anhand:
         - verfügbarem Kapital (in CHF)
