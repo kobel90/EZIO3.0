@@ -20,6 +20,7 @@ class PriceSourceManager:
 
         self.finnhub_key = self.config.get("finnhub_api_key")
         self.api_key = self.finnhub_key
+        print(f"🔐 Finnhub API-Key geladen: {self.api_key}")
 
     def is_quota_blocked(self, source: str) -> bool:
         unblock_time = self.quota_blocked_until.get(source)
