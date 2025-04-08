@@ -214,7 +214,14 @@ class TradingKI:
         anzahl = max(min_deal_size, round(anzahl / min_deal_size) * min_deal_size)
 
         self.memory.speichere_ereignis(epic, f"💸 Trade-Größe: {anzahl} bei {preis} (Conf={confidence})")
-        return anzahl
+        return {
+            "anzahl": anzahl,
+            "preis": preis,
+            "confidence": confidence,
+            "max_einsatz": max_einsatz,
+            "eingesetztes_kapital": einsatz,
+            "min_deal_size": min_deal_size
+        }
 
     def schaetze_trade_dauer(self, epic: str, daten: Dict) -> int:
         """
