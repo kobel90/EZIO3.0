@@ -697,6 +697,25 @@ class TradingBotV4:
         except Exception as e:
             print(f"{Fore.RED}🔥 Fehler beim Öffnen der Position: {e}{Style.RESET_ALL}")
 
+    def feedback_nach_trade(self, epic: str, signal: dict, preis: float):
+        """
+        Übergibt nach erfolgreicher Order ein Feedback an die KI.
+        """
+        try:
+            self.trading_ki.memory.speichere(epic, {
+                "typ": "order_feedback",
+                "zeit": datetime.now().isoformat(),
+                "preis": preis,
+                "richtung": signal.get("direction"),
+                "groesse": signal.get("size"),
+                "confidence": signal.get("confidence"),
+                "risiko": signal.get("risiko"),
+                "dauer": signal.get("dauer")
+            })
+            print(f"🧠 KI-Rückmeldung gespeichert für {epic}")
+        except Exception as e:
+            print(f"{Fore.YELLOW}⚠️ Rückmeldung an KI fehlgeschlagen: {e}{Style.RESET_ALL}")
+
     def logge_gewinn(self, epic: str, gewinn: float, confidence: float, risiko: float, dauer: int):
         """Loggt das Ergebnis eines abgeschlossenen Trades in Memory & CSV."""
         from memory_module import MemoryModule
