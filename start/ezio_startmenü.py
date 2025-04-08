@@ -90,6 +90,15 @@ def main_menu():
                 console.print(f"[red]Fehler beim Starten des SL/TP Editors:[/red] {e}")
                 input("\nDrücke Enter zum Zurückkehren...")
         elif auswahl == "5":
+            try:
+                import tkinter as tk
+                sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+                from status_settings_gui import starte_gui
+                starte_gui()
+            except Exception as e:
+                console.print(f"[red]Fehler beim Starten der Status-GUI:[/red] {e}")
+                input("\nDrücke Enter zum Zurückkehren...")
+        elif auswahl == "6":
             console.print("\n👋 [bold red]Bis bald, Commander![/bold red]")
             sys.exit(0)
 
