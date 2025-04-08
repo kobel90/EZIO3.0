@@ -456,7 +456,7 @@ class CapitalComAPI:
                 return 0.0
 
             current_price = float(markt_info.get("snapshot", {}).get("bid", 0))
-            min_unit = float(markt_info.get("minDealSize", 1))
+            min_unit = float(markt_info.get("instrument", {}).get("minDealSize", 1))
 
             if current_price <= 0:
                 logger.warning(f"❌ Kein gültiger Preis für {epic}")
