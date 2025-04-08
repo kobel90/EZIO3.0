@@ -693,7 +693,7 @@ class TradingBotV4:
         memory.speichere_signal(epic, eintrag)
 
         # Zusätzlich: CSV-Logging
-        logzeile = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')};{epic};{gewinn:.2f};{confidence:.2f};{risiko:.2f};{dauer}\n"
+        logzeile = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')};{epic};{gewinn:.2f};{confidence:.2f};{risiko if isinstance(risiko, str) else f'{risiko:.2f}'};{dauer}\n"
         try:
             with open("guv_log.csv", "a") as f:
                 f.write(logzeile)
