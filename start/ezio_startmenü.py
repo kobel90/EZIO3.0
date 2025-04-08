@@ -68,7 +68,7 @@ def main_menu():
 
         auswahl = Prompt.ask(
             "\n[bold]Auswahl[/bold]",
-            choices=["1", "2", "3", "4", "5"],
+            choices=["1", "2", "3", "4", "5", "6"],
             default="1"
         )
 
