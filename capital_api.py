@@ -112,7 +112,6 @@ class CapitalComAPI:
         Zentraler Request-Wrapper – funktioniert für alle HTTP-Methoden (GET, POST, DELETE)
         """
         return self.send_http_request(method, endpoint, data=data, params=params)
-
     def send_http_request(self, method: str, endpoint: str, data=None, params=None, headers=None, timeout=5) -> \
     Optional[requests.Response]:
         url = f"{self.BASE_URL}{endpoint}"
