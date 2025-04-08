@@ -51,63 +51,6 @@ class PriceSourceManager:
         mean_deviation = sum(letzte) / len(letzte)
         print(f"📊 Quelle: {source} | Abweichung: {abweichung:.4f} | Ø (letzte 10): {mean_deviation:.4f}")
 
-    def get_price_series_finnhub(self, epic: str, days: int = 30) -> Optional[pd.DataFrame]:
-        print(f"🟦 [Start] Preisreihe von Finnhub anfordern für {epic} ({days} Tage)")
-
-        try:
-            symbol = self.get_symbol(epic, "finnhub")
-            print(f"🟨 Symbol für Finnhub: {symbol}")
-
-            resolution = self.get_finnhub_resolution(days)
-            print(f"🟨 Verwendete Auflösung: {resolution}")
-
-            end_time = int(time.time())
-            start_time = int((datetime.now() - timedelta(days=days)).timestamp())
-
-            url = "https://finnhub.io/api/v1/stock/candle"
-            params = {
-                "symbol": symbol,
-                "resolution": resolution,
-                "from": start_time,
-                "to": end_time,
-                "token": self.api_key
-            }
-
-            print(f"📤 Sende Anfrage an Finnhub: {url} mit Params: {params}")
-            response = requests.get(url, params=params)
-            print(f"📥 Antwortstatus: {response.status_code}")
-
-            if response.status_code == 429:
-                self.block_quota("finnhub", cooldown_minutes=10)
-                print(f"⛔ Finnhub API-Limit erreicht (429) für {epic}")
-                return None
-
-            if response.status_code == 200:
-                data = response.json()
-                print(f"📦 Antwortdaten: {data if len(str(data)) < 500 else '[...gekürzt...]'}")
-
-                if data.get("s") != "ok":
-                    print(f"⚠️ Finnhub: Keine gültigen Daten für {symbol} ({epic}) – Status: {data.get('s')}")
-                    return None
-
-                if not data.get("t") or not data.get("c"):
-                    print(f"❌ Leere 't' oder 'c'-Arrays in Rückgabe – Daten: {data}")
-                    return None
-
-                df = pd.DataFrame({
-                    "timestamp": pd.to_datetime(data["t"], unit="s"),
-                    "close": data["c"]
-                })
-                df.set_index("timestamp", inplace=True)
-
-                print(f"✅ Finnhub-Zeitreihe erfolgreich erstellt für {epic} – {len(df)} Zeilen")
-                return df[["close"]]
-            else:
-                print(f"❌ Fehlercode {response.status_code} bei Finnhub-Abfrage für {epic}")
-        except Exception as e:
-            print(f"❌ Ausnahme bei Finnhub-Zeitreihe für {epic}: {e}")
-        return None
-
     def get_price_series_yfinance(self, epic: str, days: int = 30, interval: str = "1d") -> Optional[pd.DataFrame]:
         try:
             symbol = self.mapping[epic]["yfinance"]
