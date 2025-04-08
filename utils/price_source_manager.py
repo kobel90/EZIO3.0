@@ -37,12 +37,7 @@ class PriceSourceManager:
             print(f"✅ Preis via yfinance für {epic}: {price}")
             return price
 
-        price = self.get_price_finnhub(epic)
-        if price is not None:
-            print(f"✅ Preis via finnhub für {epic}: {price}")
-            return price
-
-        print(f"⛔ Kein Preis ermittelbar für {epic} über verfügbare Quellen.")
+        print(f"⛔ Kein Preis ermittelbar für {epic} über yfinance.")
         return None
 
     def log_price_source_score(self, source: str, epic: str, price: float, average: float):
