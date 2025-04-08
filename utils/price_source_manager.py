@@ -209,9 +209,9 @@ class PriceSourceManager:
             print(f"❌ Fehler bei yfinance Preisreihe für {epic}: {e}")
             return None
 
-    def get_combined_price_series(self, symbol: str, limit: int = 100) -> Optional[pd.Series]:
-        series_finnhub = self.get_price_series(symbol, limit)
-        series_yf = self.get_price_series_yfinance(symbol, limit)
+    def get_combined_price_series(self, epic: str, days: int = 30) -> Optional[pd.Series]:
+        series_finnhub = self.get_price_series_finnhub(epic, days)
+        series_yf = self.get_price_series_yfinance(epic, days)
 
         valid_series = []
         for source_name, s in [("Finnhub", series_finnhub), ("YF", series_yf)]:
@@ -224,12 +224,11 @@ class PriceSourceManager:
                 print(f"⚠️ '{source_name}' → Ungültiger Typ: {type(s)}")
 
         if not valid_series:
-            print(f"⚠️ Keine gültigen Preisreihen vorhanden – Symbol: {symbol}")
+            print(f"⚠️ Keine gültigen Preisreihen vorhanden – Epic: {epic}")
             return None
 
         combined = pd.concat(valid_series, axis=1).mean(axis=1)
-
-        return combined  # Series mit Mittelwert der Preise
+        return combined
 
     def get_symbol(self, epic: str, quelle: str) -> str:
         eintrag = self.mapping.get(epic)
