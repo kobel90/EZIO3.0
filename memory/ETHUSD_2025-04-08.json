@@ -469,5 +469,14 @@
     "trend": "abw\u00e4rts",
     "volatilitaet": 0.00435,
     "spike": false
+  },
+  {
+    "zeit": "2025-04-08T12:12:09.942558",
+    "richtung": "SELL",
+    "preis": 1566.87,
+    "groesse": 320.0,
+    "confidence": 0.8,
+    "risiko": "MITTEL",
+    "dauer": 5
   }
 ]
