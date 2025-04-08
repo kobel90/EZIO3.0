@@ -16,52 +16,6 @@ class PriceSourceManager:
     def __init__(self):
         self.config = load_config()
         self.mapping = lade_epic_mapping()
-        self.quota_blocked_until = {}
-
-        self.finnhub_key = self.config.get("finnhub_api_key")
-        self.api_key = self.finnhub_key
-        print(f"🔐 Finnhub API-Key geladen: {self.api_key}")
-
-    def is_quota_blocked(self, source: str) -> bool:
-        unblock_time = self.quota_blocked_until.get(source)
-        return unblock_time and datetime.now() < unblock_time
-
-    def block_quota(self, source: str, cooldown_minutes: int = 10):
-        until = datetime.now() + timedelta(minutes=cooldown_minutes)
-        self.quota_blocked_until[source] = until
-        print(f"⏱️ {source} blockiert bis {until.strftime('%H:%M:%S')}")
-        try:
-            with open("quota_log.csv", "a") as f:
-                f.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')},{source},{until.strftime('%Y-%m-%d %H:%M:%S')}\n")
-        except Exception as e:
-            print(f"⚠️ Fehler beim Schreiben in quota_log.csv: {e}")
-
-    def get_price_finnhub(self, epic: str) -> Optional[float]:
-        try:
-            if self.is_quota_blocked("finnhub"):
-                print(f"⚠️ Finnhub-API ist temporär blockiert für {epic}.")
-                return None
-
-            symbol = self.mapping[epic]["finnhub"]
-            url = f"https://finnhub.io/api/v1/quote?symbol={symbol}&token={self.finnhub_key}"
-            response = requests.get(url)
-
-            if response.status_code == 429:
-                self.block_quota("finnhub", cooldown_minutes=10)
-                print(f"⛔ Finnhub API-Limit erreicht (429) für {epic}")
-                return None
-
-            if response.status_code == 200:
-                data = response.json()
-                if "c" in data and data["c"] is not None:
-                    return float(data["c"])
-                else:
-                    print(f"⚠️ Kein gültiger Preis in Finnhub-Daten für {epic}: {data}")
-            else:
-                print(f"❌ Fehlercode {response.status_code} bei Finnhub-Abfrage für {epic}")
-        except Exception as e:
-            print(f"❌ Fehler bei Finnhub-Preisabruf für {epic}: {e}")
-        return None
 
     def get_price_yfinance(self, epic: str) -> Optional[float]:
         try:
