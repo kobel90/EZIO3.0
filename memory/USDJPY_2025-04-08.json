@@ -1,9 +1,73 @@
 [
   {
-    "zeit": "2025-04-08 12:07:07",
-    "gewinn": 0.0,
+    "zeit": "2025-04-08T12:07:01.975005",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:02.049952",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 30 Min (Vola: 0.07)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:02.050604",
+    "text": "\ud83d\udcca Risikobewertung: NIEDRIG (Score=1.80)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:02.050743",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:02.050847",
+    "typ": "signal",
+    "epic": "USDJPY",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 30,
+    "risiko": "NIEDRIG",
+    "symbol_finnhub": "USDJPY",
+    "symbol_yfinance": "JPY=X",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00072,
+    "spike": false
+  },
+  {
+    "zeit": "2025-04-08T12:07:06.918039",
+    "richtung": "SELL",
+    "preis": 147.221,
+    "groesse": 320.0,
     "confidence": 0.8,
     "risiko": "NIEDRIG",
     "dauer": 30
+  },
+  {
+    "zeit": "2025-04-08T12:07:09.584356",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:09.664492",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 30 Min (Vola: 0.07)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:09.665095",
+    "text": "\ud83d\udcca Risikobewertung: NIEDRIG (Score=1.80)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:09.665216",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T12:07:09.665318",
+    "typ": "signal",
+    "epic": "USDJPY",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 30,
+    "risiko": "NIEDRIG",
+    "symbol_finnhub": "USDJPY",
+    "symbol_yfinance": "JPY=X",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00072,
+    "spike": false
   }
 ]
