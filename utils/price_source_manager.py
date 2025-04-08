@@ -74,23 +74,6 @@ class PriceSourceManager:
         print(f"⚠️ Keine gültige Preisreihe für {epic}")
         return None
 
-        valid_series = []
-        for source_name, s in [("Finnhub", series_finnhub), ("YF", series_yf)]:
-            if isinstance(s, pd.DataFrame):
-                if "close" in s.columns and not s["close"].empty:
-                    valid_series.append(s["close"])
-                else:
-                    print(f"⚠️ '{source_name}' → DataFrame aber keine gültige 'close'-Spalte oder leer. Epic: {epic}")
-            else:
-                print(f"⚠️ '{source_name}' → Ungültiger Typ: {type(s)} (Epic: {epic})")
-
-        if not valid_series:
-            print(f"❌ Keine gültigen Preisreihen vorhanden für Epic: {epic}")
-            return None
-
-        combined = pd.concat(valid_series, axis=1).mean(axis=1)
-        return combined
-
     def get_symbol(self, epic: str, quelle: str) -> str:
         eintrag = self.mapping.get(epic)
         if not eintrag:
