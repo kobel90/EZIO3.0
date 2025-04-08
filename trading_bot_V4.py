@@ -595,6 +595,12 @@ class TradingBotV4:
         if not size:
             result = self.api.berechne_trade_groesse(epic)
             size = result.get("anzahl", 0.0) if isinstance(result, dict) else result
+        if isinstance(result, dict):
+            preis = result["preis"]
+            min_deal_size = result["min_deal_size"]
+            self.trading_ki.memory.speichere(epic, {
+                "order_details": result
+            })
         confidence = signal.get("confidence", 0.0)
         dauer = signal.get("dauer", 3)
         risiko = signal.get("risiko", 0.0)
