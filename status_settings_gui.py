@@ -44,6 +44,9 @@ class SettingsFenster:
         self.live_check = ttk.Checkbutton(master, text="🔴 Live-Modus aktivieren", variable=self.live_var)
         self.live_check.pack(pady=5)
 
+        self.back_button = ttk.Button(master, text="🔙 Zurück zum Menü", command=self.zurueck_zum_menue)
+        self.back_button.pack(pady=8)
+
         # Speichern-Button
         ttk.Button(master, text="💾 Einstellungen speichern", command=self.speichern).pack(pady=10)
 
