@@ -41,7 +41,6 @@ class SLTPManager:
         sl_old = old.get("stop_loss_percent", 0)
         tp_old = old.get("take_profit_percent", 0)
 
-        # Nur speichern, wenn sich etwas geändert hat
         if sl != sl_old or tp != tp_old:
             self.data[asset] = {
                 "stop_loss_percent": sl,
@@ -51,5 +50,11 @@ class SLTPManager:
             self.log_change(asset, sl_old, sl, tp_old, tp)
 
     def get_params(self, epic: str) -> dict:
-        return self.config.get(epic,
-                               self.config.get("default", {"stop_loss_percent": 0.03, "take_profit_percent": 0.05}))
+        params = self.data.get(epic, self.data.get("default", {
+            "stop_loss_percent": 0.03,
+            "take_profit_percent": 0.05
+        }))
+
+        # Optionaler Debug-Ausdruck
+        print(f"⚙️ SL/TP-Werte für {epic} → SL: {params['stop_loss_percent']}, TP: {params['take_profit_percent']}")
+        return params
