@@ -296,47 +296,6 @@ class CapitalComAPI:
 
         return {}
 
-    def open_position(self, epic: str, direction: str, size: float,
-                      stop_loss: Optional[float] = None,
-                      take_profit: Optional[float] = None) -> Dict[str, Any]:
-        """
-        Öffnet eine Marktorder (MARKET) für das gegebene EPIC.
-        Nutzt die zentrale send_request() mit Retry & Fehlerbehandlung.
-        """
-        if not self.cst or not self.security_token:
-            logger.warning("⚠️ Nicht authentifiziert. open_position() abgebrochen.")
-            return {}
-
-        order_payload = {
-            "epic": epic,
-            "direction": direction,
-            "size": str(size),
-            "orderType": "MARKET",
-            "currencyCode": "USD",
-            "guaranteedStop": False,
-            "forceOpen": True,
-            "stopLevel": str(round(stop_loss, 4)) if stop_loss else None,
-            "profitLevel": str(round(take_profit, 4)) if take_profit else None
-        }
-
-        # Entferne None-Werte (Capital.com mag keine null-Werte!)
-        order_payload = {k: v for k, v in order_payload.items() if v is not None}
-
-        endpoint = "/api/v1/positions"
-        response = self.place_order(epic, direction, size, stop_loss, take_profit)
-        if response and response.status_code == 200:
-            try:
-                data = response.json()
-                logger.info(f"📤 Order erfolgreich: {epic} | {direction} | Größe: {size}")
-                return data
-            except json.JSONDecodeError:
-                logger.error("❌ JSON-Parsing fehlgeschlagen bei open_position()")
-        else:
-            logger.warning(
-                f"❌ Keine erfolgreiche Antwort bei open_position(): Status {response.status_code if response else 'N/A'}")
-
-        return {}
-
     def get_market_info(self, epic: str) -> Dict[str, Any]:
         """
         Holt Marktinformationen zu einem EPIC.
