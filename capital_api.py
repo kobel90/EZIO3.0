@@ -323,7 +323,7 @@ class CapitalComAPI:
         order_payload = {k: v for k, v in order_payload.items() if v is not None}
 
         endpoint = "/api/v1/positions"
-        response = self.send_request("POST", endpoint, data=order_payload)
+        response = self.place_order(epic, direction, size, stop_loss, take_profit)
         if response and response.status_code == 200:
             try:
                 data = response.json()
