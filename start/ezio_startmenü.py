@@ -111,6 +111,15 @@ def play_startsound():
     # Startsound im Hintergrund abspielen
     threading.Thread(target=play_startsound).start()
 
+def zurueck_zum_menue(self):
+    self.master.destroy()
+    try:
+        # Passe den Pfad zum Startmenü an (hier: start/ezio_startmenü.py)
+        startmenue_pfad = os.path.join(os.path.dirname(__file__), "start", "ezio_startmenü.py")
+        subprocess.Popen(["python3", startmenue_pfad])
+    except Exception as e:
+        print(f"⚠️ Fehler beim Zurückkehren zum Menü: {e}")
+
 if __name__ == "__main__":
     main_menu()
     input("\n[bold]Drücke Enter zum Beenden...[/bold]")
