@@ -1,0 +1,33 @@
+[
+  {
+    "zeit": "2025-04-08T11:29:42.958590",
+    "text": "\u2b50\ufe0f Conf-Signal (0.8)"
+  },
+  {
+    "zeit": "2025-04-08T11:29:43.042481",
+    "text": "\u23f1 Dauer gesch\u00e4tzt: 30 Min (Vola: 0.01)"
+  },
+  {
+    "zeit": "2025-04-08T11:29:43.043350",
+    "text": "\ud83d\udcca Risikobewertung: NIEDRIG (Score=1.80)"
+  },
+  {
+    "zeit": "2025-04-08T11:29:43.043495",
+    "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
+  },
+  {
+    "zeit": "2025-04-08T11:29:43.043713",
+    "typ": "signal",
+    "epic": "XRPUSD",
+    "direction": "SELL",
+    "size": 320.0,
+    "confidence": 0.8,
+    "dauer": 30,
+    "risiko": "NIEDRIG",
+    "symbol_finnhub": "BINANCE:XRPUSDT",
+    "symbol_yfinance": "XRP-USD",
+    "trend": "abw\u00e4rts",
+    "volatilitaet": 0.00567,
+    "spike": false
+  }
+]
