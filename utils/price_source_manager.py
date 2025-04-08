@@ -68,8 +68,11 @@ class PriceSourceManager:
             return None
 
     def get_combined_price_series(self, epic: str, days: int = 30) -> Optional[pd.Series]:
-        series_finnhub = self.get_price_series_finnhub(epic, days)
-        series_yf = self.get_price_series_yfinance(epic, days)
+        series = self.get_price_series_yfinance(epic, days)
+        if series is not None and "close" in series.columns:
+            return series["close"]
+        print(f"⚠️ Keine gültige Preisreihe für {epic}")
+        return None
 
         valid_series = []
         for source_name, s in [("Finnhub", series_finnhub), ("YF", series_yf)]:
