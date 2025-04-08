@@ -1,22 +1,22 @@
 [
   {
-    "zeit": "2025-04-08T11:29:46.052388",
+    "zeit": "2025-04-08T11:55:13.988935",
     "text": "\u2b50\ufe0f Conf-Signal (0.8)"
   },
   {
-    "zeit": "2025-04-08T11:29:46.110510",
+    "zeit": "2025-04-08T11:55:14.052434",
     "text": "\u23f1 Dauer gesch\u00e4tzt: 30 Min (Vola: 0.07)"
   },
   {
-    "zeit": "2025-04-08T11:29:46.111064",
+    "zeit": "2025-04-08T11:55:14.053056",
     "text": "\ud83d\udcca Risikobewertung: NIEDRIG (Score=1.80)"
   },
   {
-    "zeit": "2025-04-08T11:29:46.111574",
+    "zeit": "2025-04-08T11:55:14.054530",
     "text": "\ud83d\udcb8 Trade-Gr\u00f6\u00dfe: 320.0 bei 1.0 (Conf=0.8)"
   },
   {
-    "zeit": "2025-04-08T11:29:46.111883",
+    "zeit": "2025-04-08T11:55:14.054693",
     "typ": "signal",
     "epic": "USDJPY",
     "direction": "SELL",
