@@ -69,7 +69,7 @@ class CapitalComAPI:
         self.last_request_time = datetime.now()
         self.request_count += 1
 
-    def place_order(self, epic: str, direction: str, size: float)
+    def send_request(self, epic: str, direction: str, size: float,
                      stop_loss: Optional[float] = None,
                      take_profit: Optional[float] = None) -> Optional[Dict[str, Any]]:
         """
